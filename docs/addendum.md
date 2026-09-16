@@ -2,7 +2,7 @@
 
 # Addendum: Gotchas Hit Building the Reference Implementation
 
-Three things the exercises don't anticipate, found while building the real [`/expenseflow`](../expenseflow) implementation.
+Three things the exercises don't anticipate, found while building the real [`/expenseflow`](../expenseflow) implementation. If you want to learn the process that surfaced these — and run it yourself — see [Exercise 9](exercise-9.md).
 
 ## 1. Port collisions (shared machines)
 

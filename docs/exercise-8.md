@@ -81,4 +81,4 @@ docs/PRODUCTION-GAP.md.
 Ask Claude to turn `docs/PRODUCTION-GAP.md` into a one-slide executive summary with a recommendation: greenlight, greenlight-with-conditions, or do-not-ship. You now have a documented, reviewed, ship-assessed backend.
 
 ---
-[← Previous: Exercise 7](exercise-7.md) · [Back to index](index.md)
+[← Previous: Exercise 7](exercise-7.md) · [Back to index](index.md) · [Next: Exercise 9 →](exercise-9.md)

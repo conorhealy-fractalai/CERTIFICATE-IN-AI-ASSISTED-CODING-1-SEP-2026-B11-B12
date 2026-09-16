@@ -1,6 +1,6 @@
 # ExpenseFlow: A Claude Code Build Walkthrough
 
-This is a markdown conversion of the "Certification in AI-Assisted Coding" workshop exercises. Across eight exercises you use **Claude Code** to design, build, and ship **ExpenseFlow** — a small expense submission and approval API with an AI-generated spending insight feature and a Streamlit front end.
+This is a markdown conversion of the "Certification in AI-Assisted Coding" workshop exercises. Across eight exercises you use **Claude Code** to design, build, and ship **ExpenseFlow** — a small expense submission and approval API with an AI-generated spending insight feature and a Streamlit front end. A ninth, bonus exercise then turns Claude Code on the course itself.
 
 The original source material is the set of `Exercise *.docx` files and `S*_FAA_Claude - Final.pdf` slide decks in the repository root. These pages present the walkthrough portions (steps, commands, prompts, validation checks, screenshots) as plain markdown so they can be read on GitHub or served as a GitHub Pages site.
 
@@ -25,6 +25,10 @@ A working implementation built by following these exact steps lives in [`/expens
 
 *Note: this course numbers phases 1, 2, and 4 — Phase 3 covers material outside this exercise set and isn't included here.*
 
+## Bonus (not from the original workshop)
+
+- [Exercise 9 — Turtles All the Way Down: Recursive Self-Review](exercise-9.md)
+
 ## What you end up with
 
 | Piece | Built in |
@@ -37,6 +41,7 @@ A working implementation built by following these exact steps lives in [`/expens
 | `app/insights.py`, `GET /reports/insights` — Claude-powered spending insights | Exercise 6 |
 | `ui/app.py` — Streamlit front end | Exercise 7 |
 | `README.md`, `docs/HANDOFF.md`, `docs/adr/`, `docs/PRODUCTION-GAP.md` | Exercise 8 |
+| A documented review-and-fix cycle applied to this course and its own implementation | Exercise 9 (recursive — see its own note on provenance) |
 
 ## Addendum
 
@@ -49,3 +54,4 @@ A working implementation built by following these exact steps lives in [`/expens
 - "Common pitfalls" are Windows/macOS-specific gotchas from the original material.
 - Screenshots are the original workshop screenshots, carried over from the source `.docx` files.
 - Exercise 5 has been extended beyond the original workshop material with a core testing step and a promoted `/health` step (see that exercise's own note); Exercise 6 gained a small cross-reference to the same change. This was a deliberate improvement made after building and reviewing the reference implementation, not a transcription of the source `.docx`.
+- Exercise 9 is entirely new: it exists nowhere in the source `.docx` or slide decks. It documents, as a repeatable exercise, the review-and-fix process actually used to produce every "extended beyond the original workshop material" note on this page — including this bullet.
