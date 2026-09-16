@@ -35,6 +35,7 @@ expenseflow/
 ├── CLAUDE.md
 ├── README.md
 ├── requirements.txt
+├── run.sh / stop.sh       # start/stop API + UI on free local ports (see ../../docs/addendum.md)
 ├── .env                  # ANTHROPIC_API_KEY (never committed)
 ├── expenseflow.db         # SQLite file (never committed)
 ├── app/

@@ -123,7 +123,7 @@ Example #2:
 
 ## Common pitfalls (Windows and macOS)
 
-- Port 8000 in use? Add `--port 8001` to the uvicorn command and open `/docs` on that port.
+- Port 8000 in use? Add `--port 8001` to the uvicorn command and open `/docs` on that port. On a shared machine this happens often enough that the real build added a script to handle it automatically — see the [addendum](addendum.md).
 - Auto-reload only watches code files. If you change `CLAUDE.md` or `.env`, restart the server manually.
 - Keep the server terminal running. Run all other commands in a second terminal tab so you do not kill it.
 

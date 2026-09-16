@@ -45,6 +45,22 @@ ANTHROPIC_API_KEY=sk-ant-your-real-key-here
 
 ## Run
 
+### Quick start: `run.sh`
+
+```bash
+./run.sh
+```
+
+This picks two free local ports, starts the API, waits for it to pass its health check, starts Streamlit pointed at that API via `API_BASE`, waits for it to pass its health check too, and prints both URLs. Logs go to `.run/api.log` and `.run/ui.log` (gitignored). Stop everything with:
+
+```bash
+./stop.sh
+```
+
+Use this if you're on a shared machine where the default ports (8000/8501) might already be taken by someone else — it never assumes a fixed port.
+
+### Manual: two terminals, fixed ports
+
 Start the API:
 
 ```bash
@@ -59,7 +75,7 @@ In a second terminal (venv activated), start the UI:
 streamlit run ui/app.py
 ```
 
-Open `http://localhost:8501`. The UI reads its API location from the `API_BASE` environment variable, defaulting to `http://127.0.0.1:8000`.
+Open `http://localhost:8501`. The UI reads its API location from the `API_BASE` environment variable, defaulting to `http://127.0.0.1:8000`. If 8000 or 8501 is already in use, pass `--port <n>` to uvicorn or `--server.port <n>` to streamlit, and set `API_BASE` to match before launching the UI — or just use `./run.sh` instead.
 
 ## Test
 

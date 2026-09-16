@@ -120,7 +120,7 @@ flight. Keep everything in the one file.
 ## Common pitfalls (Windows and macOS)
 
 - `streamlit not found` in the second terminal almost always means the venv was not activated there. Activate it first, then run streamlit.
-- Port already in use: if 8501 or 8000 is taken, stop the old process, or start Streamlit with `--server.port` on a free port.
+- Port already in use: if 8501 or 8000 is taken, stop the old process, or start Streamlit with `--server.port` on a free port. On a shared machine, see the [addendum](addendum.md) for a `run.sh` script that picks free ports for both servers automatically and wires `API_BASE` for you.
 - There is no browser CORS problem here because Streamlit calls the API server-side through httpx, not from the browser. Do not add CORS hacks you do not need.
 - Displaying money: divide integer minor units by 100 for display only. Never store or send floats; the integer remains the source of truth.
 

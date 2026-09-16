@@ -35,6 +35,10 @@ A working implementation built by following these exact steps lives in [`/expens
 | `ui/app.py` — Streamlit front end | Exercise 7 |
 | `README.md`, `docs/HANDOFF.md`, `docs/adr/`, `docs/PRODUCTION-GAP.md` | Exercise 8 |
 
+## Addendum
+
+- [Running on a Shared Training Server](addendum.md) — port-collision handling via `run.sh`/`stop.sh`, and a real `ANTHROPIC_API_KEY` gotcha hit and fixed during this build.
+
 ## Notes on this conversion
 
 - Every "Type this prompt into Claude Code" block is the literal prompt used in the workshop, preserved verbatim so you can replay the build yourself.

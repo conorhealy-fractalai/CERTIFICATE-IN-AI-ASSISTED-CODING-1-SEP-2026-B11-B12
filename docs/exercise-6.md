@@ -131,6 +131,7 @@ once, then fall back to a safe default object. Keep max_tokens small.
 ## Common pitfalls (Windows and macOS)
 
 - The key is read as empty: `load_dotenv()` must run before `os.environ` is read, and you must restart uvicorn after editing `.env` because `--reload` does not always re-read the environment.
+- The key looks right but every call still fails with a connection error: check for a stray trailing `\r` character (common if the key passed through a Windows-style line ending somewhere). See the [addendum](addendum.md) for how this was diagnosed and fixed in the real build.
 - Committing `.env`. Confirm it is in `.gitignore` before your first commit in Exercise 8.
 - A model-name typo (for example an old or misspelled name) raises a 404 from the API. The fallback hides it, so always read the uvicorn console when the insight looks wrong.
 - Forgetting `max_tokens` leads to slower, costlier calls. Keep insight calls tight.
