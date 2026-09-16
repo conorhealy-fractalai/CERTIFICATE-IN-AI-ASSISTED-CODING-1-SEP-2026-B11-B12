@@ -137,14 +137,16 @@ of expenses.
 
 **Type this prompt into Claude Code**
 ```
-Write a pytest suite under tests/ for the API in app/routes.py. Use FastAPI's
-TestClient and isolate each test on a fresh temporary SQLite database (don't touch the
-real expenseflow.db). Cover: creating an expense (success, and rejecting a non-positive
-amount_minor), listing expenses filtered by status and by category, getting a missing
-expense (404), approving an expense then approving it again (409), rejecting an
-expense then approving it (409), and GET /health. Do not write a test for
-/reports/insights yet — that endpoint doesn't exist until Exercise 6, and when it does
-it will need the Anthropic client mocked so tests never make a live network call.
+Write a pytest suite under tests/ for the API in app/routes.py. Isolate tests from the
+real expenseflow.db by setting the DATABASE_URL environment variable to a temp file
+path in tests/conftest.py, before app.db and app.main are imported — don't monkeypatch
+app.db's internals after the fact. Use FastAPI's TestClient. Cover: creating an expense
+(success, and rejecting a non-positive amount_minor), listing expenses filtered by
+status and by category, getting a missing expense (404), approving an expense then
+approving it again (409), rejecting an expense then approving it (409), and GET
+/health. Do not write a test for /reports/insights yet — that endpoint doesn't exist
+until Exercise 6, and when it does it will need the Anthropic client mocked so tests
+never make a live network call.
 ```
 
 > **VALIDATE** `python -m pytest -q` runs and every test passes. Re-run it after any later change to `app/routes.py` — a green suite is what lets you refactor without re-clicking through Swagger by hand.

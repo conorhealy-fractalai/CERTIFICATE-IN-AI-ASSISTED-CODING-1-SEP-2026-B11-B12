@@ -58,6 +58,8 @@ expenseflow/
 
 ## 4. Edge cases and decisions
 
+Decisions about this project's own business logic (case 2 below) are implemented in the same exercise that builds the affected code; integrations with external systems (case 1, case 3) stay explicitly deferred stubs until their dedicated exercise.
+
 1. **FX conversion failure.** The FX lookup is an external dependency (httpx call in a real build) and can fail or be slow. Decision: FX conversion is a clearly-marked stub in Exercise 5 (`amount_base_minor = amount_minor`, `TODO` comment). In a real production build this would need a cached last-known rate and a fallback so expense submission never blocks on a flaky external FX API.
 2. **Double approval / conflicting state transitions.** Decision (Exercise 3): a transition out of a terminal state (`approved`/`rejected` → `approved` or `rejected`) must be rejected, not silently applied. This is enforced in `app/routes.py`: both `/approve` and `/reject` check the expense's current status first and return `409` if it is already `approved` or `rejected`.
 3. **AI insight reliability.** `GET /reports/insights` depends on an external LLM call that can time out, return malformed output, or hit a rate limit. Decision: `generate_insight` requests strict JSON, validates the shape, retries once on failure, and falls back to a safe default object rather than ever raising through to the client (see Exercise 6). In practice, the model sometimes wraps its JSON in a ` ```json ` code fence despite being told not to — `_strip_code_fence()` strips that defensively before parsing, since the system prompt alone isn't reliable enough to skip this check.

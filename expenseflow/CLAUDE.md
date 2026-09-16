@@ -19,6 +19,8 @@ One user journey: submit an expense, convert it to a base currency, approve or r
 - Money is stored as integer minor units (paise / cents), never float.
 - Base currency is INR. All amounts are normalised to base on write.
 - Never hardcode secrets. Read them from environment variables via python-dotenv.
+- Decisions about this project's own business logic (e.g. double-approval) are implemented in the same exercise that builds the affected code; integrations with external systems (e.g. FX rates) stay explicitly deferred stubs until their dedicated exercise.
+- The `status`/`category` indexes and the `InsightOut`/`HealthOut` response models are intentional light hygiene added beyond the minimal PoC brief, not scope that was always there.
 
 ## Run and test
 - Run API:      python -m uvicorn app.main:app --reload

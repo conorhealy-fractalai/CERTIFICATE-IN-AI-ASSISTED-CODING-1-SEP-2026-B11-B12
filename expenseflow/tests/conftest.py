@@ -1,37 +1,32 @@
-"""Shared pytest fixtures for the ExpenseFlow test suite."""
+"""Shared pytest fixtures for the ExpenseFlow test suite.
+
+Setting DATABASE_URL before importing app.db/app.main (rather than monkeypatching
+their internals afterwards) is what isolates tests from the real expenseflow.db --
+app/db.py reads the environment variable once, at import time.
+"""
+
+import atexit
+import os
+import tempfile
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-import app.db as db_module
-from app.db import get_db
-from app.main import app
+_fd, _TEST_DB_PATH = tempfile.mkstemp(suffix=".db")
+os.close(_fd)
+os.environ["DATABASE_URL"] = f"sqlite:///{_TEST_DB_PATH}"
+atexit.register(lambda: os.path.exists(_TEST_DB_PATH) and os.remove(_TEST_DB_PATH))
+
+from app.db import Base, engine  # noqa: E402
+from app.main import app  # noqa: E402
 
 
 @pytest.fixture()
-def client(tmp_path, monkeypatch):
-    """A TestClient backed by a fresh temp-file SQLite DB, isolated per test."""
-    test_engine = create_engine(
-        f"sqlite:///{tmp_path / 'test.db'}", connect_args={"check_same_thread": False}
-    )
-    testing_session_local = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
-
-    monkeypatch.setattr(db_module, "engine", test_engine)
-    monkeypatch.setattr(db_module, "SessionLocal", testing_session_local)
-
-    def override_get_db():
-        session = testing_session_local()
-        try:
-            yield session
-        finally:
-            session.close()
-
-    app.dependency_overrides[get_db] = override_get_db
+def client():
+    """A TestClient backed by the shared temp-file SQLite DB, reset per test."""
     with TestClient(app) as test_client:
         yield test_client
-    app.dependency_overrides.clear()
+    Base.metadata.drop_all(bind=engine)
 
 
 # NOTE for an Exercise 6+ addendum: any test exercising GET /reports/insights must

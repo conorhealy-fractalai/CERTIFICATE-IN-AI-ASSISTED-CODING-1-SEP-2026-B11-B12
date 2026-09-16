@@ -40,7 +40,7 @@ A working implementation built by following these exact steps lives in [`/expens
 
 ## Addendum
 
-- [Running on a Shared Training Server](addendum.md) — port-collision handling via `run.sh`/`stop.sh`, and a real `ANTHROPIC_API_KEY` gotcha hit and fixed during this build.
+- [Gotchas Hit Building the Reference Implementation](addendum.md) — port-collision handling via `run.sh`/`stop.sh`, a real `ANTHROPIC_API_KEY` gotcha, and a note on the course's placeholder model names.
 
 ## Notes on this conversion
 

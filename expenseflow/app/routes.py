@@ -12,6 +12,12 @@ from app.schemas import ExpenseCreate, ExpenseOut, HealthOut, InsightOut
 router = APIRouter()
 
 
+def _ensure_not_terminal(expense: Expense) -> None:
+    """Raise 409 if the expense is already approved or rejected."""
+    if expense.status in ("approved", "rejected"):
+        raise HTTPException(status_code=409, detail=f"Expense is already {expense.status}")
+
+
 @router.post("/expenses", response_model=ExpenseOut)
 def create_expense(payload: ExpenseCreate, db: Session = Depends(get_db)) -> Expense:
     """Submit a new expense. Status starts as 'pending'."""
@@ -63,8 +69,7 @@ def approve_expense(expense_id: int, db: Session = Depends(get_db)) -> Expense:
     expense = db.get(Expense, expense_id)
     if expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
-    if expense.status in ("approved", "rejected"):
-        raise HTTPException(status_code=409, detail=f"Expense is already {expense.status}")
+    _ensure_not_terminal(expense)
     expense.status = "approved"
     db.commit()
     db.refresh(expense)
@@ -77,8 +82,7 @@ def reject_expense(expense_id: int, db: Session = Depends(get_db)) -> Expense:
     expense = db.get(Expense, expense_id)
     if expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
-    if expense.status in ("approved", "rejected"):
-        raise HTTPException(status_code=409, detail=f"Expense is already {expense.status}")
+    _ensure_not_terminal(expense)
     expense.status = "rejected"
     db.commit()
     db.refresh(expense)

@@ -1,11 +1,12 @@
 """SQLAlchemy engine, session factory, and declarative base for ExpenseFlow."""
 
+import os
 from collections.abc import Iterator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-DATABASE_URL = "sqlite:///expenseflow.db"
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///expenseflow.db")
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

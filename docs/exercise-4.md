@@ -25,10 +25,12 @@ Ask for the SQLAlchemy engine, session, and base, plus a function that creates t
 ```
 Implement app/db.py per @docs/ARCHITECTURE.md and @CLAUDE.md: a SQLAlchemy engine on
 SQLite (expenseflow.db), a SessionLocal factory, a Base, a get_db dependency for
-FastAPI, and an init_db() that creates all tables. Type hints throughout.
+FastAPI, and an init_db() that creates all tables. Read the database URL from a
+DATABASE_URL environment variable, defaulting to sqlite:///expenseflow.db, so tests
+can point it elsewhere later without touching this file again. Type hints throughout.
 ```
 
-> **VALIDATE** Claude proposes `app/db.py` and asks permission. Read the diff: engine points at `sqlite:///expenseflow.db`, `get_db` yields and closes a session in a try/finally. Approve it.
+> **VALIDATE** Claude proposes `app/db.py` and asks permission. Read the diff: engine points at `sqlite:///expenseflow.db` by default (via `os.environ.get("DATABASE_URL", ...)`, not a hardcoded string), `get_db` yields and closes a session in a try/finally. Approve it.
 
 ![Proposed app/db.py diff](images/exercise-4/img_001.png)
 ![Reviewing the get_db dependency](images/exercise-4/img_002.png)
