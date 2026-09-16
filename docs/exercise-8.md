@@ -28,7 +28,7 @@ install on Windows, how to configure .env, how to run the server and the tests, 
 the full endpoint reference. Base it on the real code, not assumptions.
 ```
 
-> **VALIDATE** `README.md` contains the exact Windows setup commands you used, the `.env` keys, run/test commands, and every endpoint including the ones the skill added. A new teammate could start from zero.
+> **VALIDATE** `README.md` contains the exact Windows setup commands you used, the `.env` keys, run/test commands, and every endpoint, including the ones added in later exercises (health check, insights). A new teammate could start from zero.
 
 ![Generated README.md](images/exercise-8/img_001.png)
 

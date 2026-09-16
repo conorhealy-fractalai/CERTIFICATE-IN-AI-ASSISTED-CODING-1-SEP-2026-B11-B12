@@ -100,6 +100,8 @@ One user journey: submit an expense, convert it to a base currency, approve or r
 
 > **VALIDATE** Save `CLAUDE.md`. The "Money as integer minor units" and "Do not add dependencies without telling me" lines are the two that will pay off most: they pre-empt the two most common AI mistakes.
 
+> **Note:** "Python 3.12" in the Stack section is a generic default, not a hard requirement — use whatever Python 3.x is actually installed in your environment and edit the line to match. The real build behind this walkthrough used Python 3.10, since that was the only version available on the training server.
+
 ### 4. Prove Claude is reading it
 
 Start a fresh prompt and ask a question whose answer only exists in `CLAUDE.md`. This confirms the constitution is live.

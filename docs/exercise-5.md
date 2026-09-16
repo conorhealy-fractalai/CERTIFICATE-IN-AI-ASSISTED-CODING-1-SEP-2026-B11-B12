@@ -7,9 +7,9 @@
 | | |
 |---|---|
 | **Dev cycle** | Develop (API) |
-| **CC features** | Build loop, running the live server, validating in the Swagger UI (`/docs`), pydantic schemas |
-| **Time** | 40 min |
-| **You produce** | A running FastAPI app with create / list / get / approve / reject endpoints |
+| **CC features** | Build loop, running the live server, validating in the Swagger UI (`/docs`), pydantic schemas, pytest via Claude Code |
+| **Time** | 55 min |
+| **You produce** | A running FastAPI app with create / list / get / approve / reject / health endpoints, double-approval enforcement, and a passing pytest suite |
 
 ## Objective
 
@@ -36,7 +36,7 @@ validation: amount_minor must be positive, currency is a 3-letter code.
 
 ### 2. Generate the routes and app entry point
 
-Now the endpoints and the FastAPI app. Tell Claude to leave the FX conversion as a clearly-marked stub for now: `amount_base_minor` equals `amount_minor`. You will wire real conversion in Exercise 6.
+Now the endpoints and the FastAPI app. Tell Claude to leave the FX conversion as a clearly-marked stub for now: `amount_base_minor` equals `amount_minor`. You will wire real conversion in Exercise 6. Also carry the double-approval decision from Exercise 3's architecture plan through into the code — a decision that stays on paper isn't a decision, it's a wish.
 
 **Type this prompt into Claude Code**
 ```
@@ -46,10 +46,12 @@ POST /expenses (create, status pending), GET /expenses (list, optional status an
 category query filters), GET /expenses/{id} (404 if missing), POST
 /expenses/{id}/approve, POST /expenses/{id}/reject. For now set amount_base_minor =
 amount_minor with a TODO comment marking where FX conversion goes. Use the get_db
-dependency.
+dependency. Per the Exercise 3 decision on double approval: if an expense is already
+approved or rejected, a further approve or reject call must return 409, not silently
+overwrite the status.
 ```
 
-> **VALIDATE** Read the diff across `app/main.py` and `app/routes.py`. The TODO marker for FX conversion is present. Approve / reject set status and return the updated expense. Approve the changes.
+> **VALIDATE** Read the diff across `app/main.py` and `app/routes.py`. The TODO marker for FX conversion is present. Approve / reject set status and return the updated expense — and return 409 instead if the expense is already in a terminal state (`approved` or `rejected`). Approve the changes.
 
 ![routes.py diff](images/exercise-5/img_003.png)
 ![main.py diff](images/exercise-5/img_004.png)
@@ -115,11 +117,45 @@ Example #2:
 ![Approving an expense](images/exercise-5/img_009.png)
 ![Filtering by status](images/exercise-5/img_010.png)
 
+### 6. Add a health check
+
+Every deployment platform's first question is "how do I know it's up?" Add that answer now, while it's cheap, rather than bolting it on later.
+
+**Type this prompt into Claude Code**
+```
+Add a GET /health endpoint to app/routes.py that returns status "ok" and the row count
+of expenses.
+```
+
+> **VALIDATE** `GET /health` returns `{"status": "ok", "count": <number of expenses>}`.
+
+**Checkpoint:** update `docs/ARCHITECTURE.md`'s endpoint table to add the `/health` row now that it exists — an architecture doc that doesn't track what you actually built stops being useful by the second exercise. You'll do this again in Exercise 6 when `/reports/insights` is added.
+
+### 7. Write the test suite
+
+`CLAUDE.md` has promised `python -m pytest -q` since Exercise 2. Make that promise true before the API grows any further — manual Swagger checks don't survive a refactor, tests do.
+
+**Type this prompt into Claude Code**
+```
+Write a pytest suite under tests/ for the API in app/routes.py. Use FastAPI's
+TestClient and isolate each test on a fresh temporary SQLite database (don't touch the
+real expenseflow.db). Cover: creating an expense (success, and rejecting a non-positive
+amount_minor), listing expenses filtered by status and by category, getting a missing
+expense (404), approving an expense then approving it again (409), rejecting an
+expense then approving it (409), and GET /health. Do not write a test for
+/reports/insights yet — that endpoint doesn't exist until Exercise 6, and when it does
+it will need the Anthropic client mocked so tests never make a live network call.
+```
+
+> **VALIDATE** `python -m pytest -q` runs and every test passes. Re-run it after any later change to `app/routes.py` — a green suite is what lets you refactor without re-clicking through Swagger by hand.
+
 ## What success looks like
 
-- Uvicorn serves the app and the Swagger UI lists all five endpoints.
+- Uvicorn serves the app and the Swagger UI lists all six endpoints, including `/health`.
 - You ran the full submit → list → approve journey by hand without writing client code.
 - The FX conversion is a clearly-marked TODO, deliberately deferred, not silently faked.
+- Approving or rejecting an already-terminal expense returns 409 — the Exercise 3 decision on double-approval actually survived into the build.
+- A real pytest suite exists and passes, covering the workflow above.
 
 ## Common pitfalls (Windows and macOS)
 
@@ -129,7 +165,7 @@ Example #2:
 
 ## Stretch goal
 
-Ask Claude to add a `GET /health` endpoint that returns status `ok` and the row count of expenses. Health checks are the first thing any deployment platform asks for.
+Ask Claude to add `DELETE /expenses/{id}`, restricted to expenses that are still `pending` — attempting to delete an `approved` or `rejected` expense should return 409, same as the double-approval guard you just built. This reinforces the terminal-state concept from Step 2 rather than introducing a new one, and add a test for it alongside the suite from Step 7.
 
 ---
 [← Previous: Exercise 4](exercise-4.md) · [Back to index](index.md) · [Next: Exercise 6 →](exercise-6.md)

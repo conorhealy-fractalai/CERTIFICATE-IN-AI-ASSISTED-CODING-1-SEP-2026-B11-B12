@@ -115,7 +115,7 @@ flight. Keep everything in the one file.
 
 - You built a working UI for ExpenseFlow entirely by directing Claude Code, and it talks to your real running API.
 - You can run the full stack locally: FastAPI in one terminal, Streamlit in another, sharing one database.
-- You understand why the UI reads `API_BASE` from the environment: the same front end can point at a Postgres-backed API with no code change.
+- You understand why the UI reads `API_BASE` from the environment: the same front end could in principle point at a different backend (e.g. a Postgres-backed API) with no code change — though no such backend is built or validated in this repo; see the stretch goal.
 
 ## Common pitfalls (Windows and macOS)
 
@@ -126,7 +126,7 @@ flight. Keep everything in the one file.
 
 ## Stretch goal
 
-Ask Claude to add a `requirements.txt` (from `pip freeze`) and a README section explaining how to launch both servers from a clean clone, so a teammate can run the whole demo. Then point `API_BASE` at a Postgres-backed API and watch the same UI work unchanged.
+Ask Claude to add a `requirements.txt` (from `pip freeze`) and a README section explaining how to launch both servers from a clean clone, so a teammate can run the whole demo. Then — as a hypothetical, not something to actually build here — consider what it would take to point `API_BASE` at a Postgres-backed API instead; `docs/PRODUCTION-GAP.md` lists that migration as unbuilt future work, and the UI's dependence only on `API_BASE` and the HTTP contract is exactly what would make swapping the backend a non-event for `ui/app.py`.
 
 ---
 [← Previous: Exercise 6](exercise-6.md) · [Back to index](index.md) · [Next: Exercise 8 →](exercise-8.md)

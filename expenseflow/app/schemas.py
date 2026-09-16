@@ -29,3 +29,17 @@ class ExpenseOut(BaseModel):
     amount_base_minor: int
     status: str
     created_at: datetime
+
+
+class InsightOut(BaseModel):
+    """An AI-generated spending insight."""
+
+    summary: str
+    bullets: list[str]
+
+
+class HealthOut(BaseModel):
+    """Health check response."""
+
+    status: str
+    count: int

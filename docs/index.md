@@ -23,14 +23,17 @@ A working implementation built by following these exact steps lives in [`/expens
 - [Exercise 7 — Put a Face On It: A Streamlit UI](exercise-7.md)
 - [Exercise 8 — Document and Ship](exercise-8.md)
 
+*Note: this course numbers phases 1, 2, and 4 — Phase 3 covers material outside this exercise set and isn't included here.*
+
 ## What you end up with
 
 | Piece | Built in |
 |---|---|
 | Project scaffold, Python venv, `CLAUDE.md` constitution | Exercise 2 |
-| `docs/ARCHITECTURE.md` — agreed schema, endpoints, file layout | Exercise 3 |
+| `docs/ARCHITECTURE.md` — agreed schema, endpoints, file layout | Exercise 3 (endpoint table extended in Exercises 5 and 6) |
 | `app/db.py`, `app/models.py` — SQLAlchemy engine and `Expense` ORM model | Exercise 4 |
-| `app/schemas.py`, `app/routes.py`, `app/main.py` — FastAPI CRUD + approval workflow | Exercise 5 |
+| `app/schemas.py`, `app/routes.py`, `app/main.py` — FastAPI CRUD + approval workflow (with a `/health` check and double-approval enforcement) | Exercise 5 |
+| `tests/` — pytest suite covering CRUD, filters, 404s, and the double-approval 409s | Exercise 5 |
 | `app/insights.py`, `GET /reports/insights` — Claude-powered spending insights | Exercise 6 |
 | `ui/app.py` — Streamlit front end | Exercise 7 |
 | `README.md`, `docs/HANDOFF.md`, `docs/adr/`, `docs/PRODUCTION-GAP.md` | Exercise 8 |
@@ -41,7 +44,8 @@ A working implementation built by following these exact steps lives in [`/expens
 
 ## Notes on this conversion
 
-- Every "Type this prompt into Claude Code" block is the literal prompt used in the workshop, preserved verbatim so you can replay the build yourself.
+- Every "Type this prompt into Claude Code" block is presented as the prompt used in the workshop. For most exercises this is a verbatim transcription of the source `.docx`. Exercises 3 and 5 are the exception: their source `.docx` files had duplicated or corrupted text in places (Exercise 3 repeated a walkthrough sentence three times in a row; Exercise 5's sample request-body section was visibly truncated/garbled), and those sections were editorially reconstructed for this conversion rather than copied verbatim.
 - `VALIDATE` call-outs describe what you should see if the step worked, and are the fastest way to tell a good AI-generated diff from a bad one.
 - "Common pitfalls" are Windows/macOS-specific gotchas from the original material.
 - Screenshots are the original workshop screenshots, carried over from the source `.docx` files.
+- Exercise 5 has been extended beyond the original workshop material with a core testing step and a promoted `/health` step (see that exercise's own note); Exercise 6 gained a small cross-reference to the same change. This was a deliberate improvement made after building and reviewing the reference implementation, not a transcription of the source `.docx`.

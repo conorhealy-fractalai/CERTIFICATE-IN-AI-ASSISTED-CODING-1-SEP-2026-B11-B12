@@ -60,7 +60,7 @@ Two commands you will lean on constantly. `/context` shows how much of the conte
 /model
 ```
 
-> **VALIDATE** `/context` renders a usage map (system prompt, files, history). `/model` lists Opus 4.8, Sonnet 4.6, Haiku 4.5 and lets you switch. Leave it on the default for now.
+> **VALIDATE** `/context` renders a usage map (system prompt, files, history). `/model` lists model options such as `claude-opus-4-8`, `claude-sonnet-4-6`, `claude-haiku-4-5` and lets you switch. Leave it on the default for now.
 
 ![The /context usage map](images/exercise-1/img_004.png)
 ![The /model picker](images/exercise-1/img_005.png)
@@ -82,7 +82,7 @@ Cost awareness is a core practitioner habit. Run `/cost` to see token spend for 
 
 **Inside the session**
 ```
-/usage
+/cost
 ```
 
 > **VALIDATE** `/cost` prints tokens and approximate spend for this session. You will return to this in a later exercise when you optimise a long build.

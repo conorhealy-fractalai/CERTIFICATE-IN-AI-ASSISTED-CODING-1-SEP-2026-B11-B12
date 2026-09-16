@@ -27,11 +27,11 @@ class Expense(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     description: Mapped[str] = mapped_column(String, nullable=False)
     submitted_by: Mapped[str] = mapped_column(String, nullable=False)
-    category: Mapped[str] = mapped_column(String, nullable=False)
+    category: Mapped[str] = mapped_column(String, nullable=False, index=True)
     amount_minor: Mapped[int] = mapped_column(Integer, nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
     amount_base_minor: Mapped[int] = mapped_column(Integer, nullable=False)
-    status: Mapped[str] = mapped_column(String, nullable=False, default="pending")
+    status: Mapped[str] = mapped_column(String, nullable=False, default="pending", index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=lambda: datetime.now(timezone.utc)
     )

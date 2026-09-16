@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.insights import generate_insight
 from app.models import Expense
-from app.schemas import ExpenseCreate, ExpenseOut
+from app.schemas import ExpenseCreate, ExpenseOut, HealthOut, InsightOut
 
 router = APIRouter()
 
@@ -59,10 +59,12 @@ def get_expense(expense_id: int, db: Session = Depends(get_db)) -> Expense:
 
 @router.post("/expenses/{expense_id}/approve", response_model=ExpenseOut)
 def approve_expense(expense_id: int, db: Session = Depends(get_db)) -> Expense:
-    """Mark an expense as approved."""
+    """Mark an expense as approved. 409 if it is already approved or rejected."""
     expense = db.get(Expense, expense_id)
     if expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
+    if expense.status in ("approved", "rejected"):
+        raise HTTPException(status_code=409, detail=f"Expense is already {expense.status}")
     expense.status = "approved"
     db.commit()
     db.refresh(expense)
@@ -71,23 +73,26 @@ def approve_expense(expense_id: int, db: Session = Depends(get_db)) -> Expense:
 
 @router.post("/expenses/{expense_id}/reject", response_model=ExpenseOut)
 def reject_expense(expense_id: int, db: Session = Depends(get_db)) -> Expense:
-    """Mark an expense as rejected."""
+    """Mark an expense as rejected. 409 if it is already approved or rejected."""
     expense = db.get(Expense, expense_id)
     if expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
+    if expense.status in ("approved", "rejected"):
+        raise HTTPException(status_code=409, detail=f"Expense is already {expense.status}")
     expense.status = "rejected"
     db.commit()
     db.refresh(expense)
     return expense
 
 
-@router.get("/reports/insights")
+@router.get("/reports/insights", response_model=InsightOut)
 def get_insights(db: Session = Depends(get_db)) -> dict:
     """Return an AI-generated summary of spending across stored expenses."""
     expenses = db.query(Expense).all()
     expense_dicts = [
         {
             "amount_base_minor": e.amount_base_minor,
+            "currency": e.currency,
             "category": e.category,
             "status": e.status,
         }
@@ -96,7 +101,7 @@ def get_insights(db: Session = Depends(get_db)) -> dict:
     return generate_insight(expense_dicts)
 
 
-@router.get("/health")
+@router.get("/health", response_model=HealthOut)
 def health(db: Session = Depends(get_db)) -> dict:
     """Health check: reports service status and the number of stored expenses."""
     count = db.query(func.count(Expense.id)).scalar()

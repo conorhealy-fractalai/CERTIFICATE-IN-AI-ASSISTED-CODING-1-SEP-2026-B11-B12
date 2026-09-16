@@ -55,6 +55,8 @@ Add type hints and a module docstring.
 
 > **VALIDATE** Read the diff before approving: you should see `client = anthropic.Anthropic()`, a `client.messages.create(...)` call with `model="claude-sonnet-4-6"` and a `max_tokens` value, `load_dotenv()` near the top, and a try/except that returns a fallback. No key is hard-coded.
 
+> **Note:** `claude-sonnet-4-6` here is an illustrative model name from the course material, not a real callable model id. The real build substitutes a real current model id in `app/insights.py` (see the comment left in that file) — the same kind of course-vs-reality substitution already documented for the `ANTHROPIC_API_KEY` `\r` bug in the [addendum](addendum.md).
+
 ![insights.py diff, part 1](images/exercise-6/img_003.png)
 ![insights.py diff, part 2](images/exercise-6/img_004.png)
 ![Reviewing the Messages API call](images/exercise-6/img_005.png)
@@ -111,10 +113,16 @@ In app/insights.py, change the instruction so the model returns strict JSON only
 object with keys summary (a string) and bullets (an array of exactly three strings).
 Add a system prompt that says: respond with JSON only, no prose, no code fences. Parse
 the response with json.loads and validate the shape. If parsing fails, retry the call
-once, then fall back to a safe default object. Keep max_tokens small.
+once, then fall back to a safe default object. Keep max_tokens small. Now that
+generate_insight returns the full structured object, update the GET /reports/insights
+route in app/routes.py to return it directly instead of wrapping it in {"insight": ...}.
 ```
 
-> **VALIDATE** `GET /reports/insights` now returns structured JSON with `summary` and a three-item `bullets` array. Temporarily feed it a vague request and confirm malformed model output no longer crashes the route: it retries once, then returns the safe default.
+> **VALIDATE** `GET /reports/insights` now returns structured JSON with `summary` and a three-item `bullets` array — as the top-level response body, not nested under an `"insight"` key. Temporarily feed it a vague request and confirm malformed model output no longer crashes the route: it retries once, then returns the safe default.
+>
+> While testing this for real: the model sometimes wraps its JSON in a ` ```json ` code fence even though the system prompt says not to — a live, reproducible failure, not a hypothetical one. `json.loads` chokes on the leading backtick and the parse "fails" even though the model did everything else right. Have Claude add a small helper that strips a leading/trailing code fence before parsing, so this doesn't silently eat into your retry budget.
+
+**Checkpoint:** update `docs/ARCHITECTURE.md`'s endpoint table — add the `/reports/insights` row now that it exists, matching the health-check checkpoint from Exercise 5.
 
 ![Structured JSON prompt diff](images/exercise-6/img_016.png)
 ![System prompt enforcing JSON only](images/exercise-6/img_017.png)
@@ -138,7 +146,7 @@ once, then fall back to a safe default object. Keep max_tokens small.
 
 ## Stretch goal
 
-Swap the model to `claude-haiku-4-5` for a cheaper, faster call. Compare the insight quality against `claude-sonnet-4-6` and check the difference with `/cost` inside Claude Code. Note which model you would pick for a latency-sensitive path.
+Swap the model to `claude-haiku-4-5` for a cheaper, faster call. Compare the insight quality against `claude-sonnet-4-6` and check the difference with `/cost` inside Claude Code. Note which model you would pick for a latency-sensitive path. (As above, both names are course-illustrative — swap in whatever real current model ids you're actually using.)
 
 ---
 [← Previous: Exercise 5](exercise-5.md) · [Back to index](index.md) · [Next: Exercise 7 →](exercise-7.md)

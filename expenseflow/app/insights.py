@@ -19,7 +19,9 @@ MAX_TOKENS = 300
 SYSTEM_PROMPT = (
     "You are a spending analyst. Respond with JSON only, no prose, no code fences. "
     'The JSON object must have exactly two keys: "summary" (a short string) and '
-    '"bullets" (an array of exactly three short strings).'
+    '"bullets" (an array of exactly three short strings). '
+    "If the expenses span more than one currency, do not sum or average amounts across "
+    "differing currencies as if they were equivalent — call out the currency mixture explicitly instead."
 )
 
 _FALLBACK: dict = {
@@ -36,11 +38,20 @@ def _build_summary_text(expenses: list[dict]) -> str:
     if not expenses:
         return "No expenses recorded yet."
     lines = [
-        f"- {e.get('amount_base_minor', 0) / 100:.2f} base-currency units, "
+        f"- {e.get('amount_base_minor', 0) / 100:.2f} {e.get('currency', '?')}, "
         f"category={e.get('category', 'unknown')}, status={e.get('status', 'unknown')}"
         for e in expenses
     ]
     return "Expenses:\n" + "\n".join(lines)
+
+
+def _strip_code_fence(text: str) -> str:
+    """Strip a ```json ... ``` or ``` ... ``` wrapper if the model added one anyway."""
+    stripped = text.strip()
+    if stripped.startswith("```"):
+        stripped = stripped.removeprefix("```json").removeprefix("```").strip()
+        stripped = stripped.removesuffix("```").strip()
+    return stripped
 
 
 def _valid_shape(data: object) -> bool:
@@ -72,7 +83,7 @@ def _call_model(expenses: list[dict]) -> dict:
             }
         ],
     )
-    raw_text = response.content[0].text
+    raw_text = _strip_code_fence(response.content[0].text)
     data = json.loads(raw_text)
     if not _valid_shape(data):
         raise ValueError(f"Unexpected shape from model: {data!r}")

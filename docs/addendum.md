@@ -52,5 +52,21 @@ python3 -c "import os; print(repr(os.environ.get('ANTHROPIC_API_KEY', '')[-5:]))
 
 If the output ends in `\r'` instead of a normal character, that's the bug.
 
+## 3. Model names are course placeholders
+
+**Symptom:** following Exercise 6 literally with `model="claude-sonnet-4-6"` (or the stretch goal's `claude-haiku-4-5`) fails, because those aren't real callable model ids.
+
+**Cause:** the course material uses illustrative model names that don't correspond to anything the Anthropic API will actually resolve. This is a documentation convenience, not a build instruction — the exercise text was never meant to be typed in as a literal, permanent model id.
+
+**Fix used in this build:** `app/insights.py` substitutes a real current model id, with a comment left in place for traceability:
+
+```python
+# Course material calls this "claude-sonnet-4-6"; using the real current model id
+# so the call actually resolves.
+MODEL = "claude-sonnet-5"
+```
+
+**If you hit this yourself:** whatever model name a course, blog post, or old prompt gives you, check it against the current model list before wiring it into code that will actually run — `/model` inside Claude Code, or the Anthropic API docs, are the source of truth, not a fixed string in a walkthrough.
+
 ---
 [← Back to index](index.md)
